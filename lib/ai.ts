@@ -24,7 +24,7 @@ export function getGenAIRuntime() {
     live: hasModelKey(),
     service: "Google AI Studio (Gemini 3.6 Flash)",
     endpoint: `${base}/chat/completions`,
-    model: process.env.OPENAI_MODEL || "gemini-3.6-flash",
+    model: process.env.OPENAI_MODEL || "",
     adapter: "lib/ai.ts",
   };
 }
@@ -43,7 +43,7 @@ async function complete(userPrompt: string, json: boolean) {
   }
 
   const client = getClient();
-  const model = process.env.OPENAI_MODEL || "gemini-3.6-flash";
+  const model = process.env.OPENAI_MODEL || "";
 
   const response = await client.chat.completions.create({
     model,

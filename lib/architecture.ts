@@ -8,7 +8,7 @@ export const GENAI_SERVICE = {
   vendor: "Google AI Studio",
   protocol: "HTTPS POST /v1beta/openai/chat/completions (OpenAI-compatible)",
   defaultEndpoint: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
-  defaultModel: "gemini-3.6-flash",
+  defaultModel: "flash",
   env: ["OPENAI_API_KEY", "OPENAI_BASE_URL", "OPENAI_MODEL"],
   adapterFile: "lib/ai.ts",
   method: "complete() / completeJson() / completeText()",
