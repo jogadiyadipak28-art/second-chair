@@ -4,6 +4,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { motion } from "framer-motion";
 import { Logo } from "@/components/Brand";
 import { AppSidebar } from "@/components/AppSidebar";
+import { PrismaHero } from "@/components/PrismaHero";
 import { IconBrief, IconChat, IconDoc, IconSplit } from "@/components/Icons";
 import { readFileAsDocument } from "@/lib/extract";
 import { SAMPLES } from "@/lib/samples";
@@ -315,7 +316,7 @@ export default function Studio() {
 
         <main className="min-w-0 flex-1">
           {!active ? (
-            <EmptyState onOpenSample={() => addDocs([SAMPLES[0]])} />
+            <PrismaHero onOpenSample={() => addDocs([SAMPLES[0]])} />
           ) : (
             <>
               <div className="flex flex-wrap items-end justify-between gap-4 mb-5">
@@ -391,52 +392,6 @@ export default function Studio() {
   );
 }
 
-function EmptyState({ onOpenSample }: { onOpenSample: () => void }) {
-  return (
-    <div className="space-y-6">
-      <div className="paper-card rounded-studio overflow-hidden shadow-page">
-        <div className="photo-frame h-52 md:h-72">
-          <img
-            src="/images/hero-briefing-desk.png"
-            alt="Warm oak briefing desk with legal folders, a lamp, and an empty second chair"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#141414]/75 via-transparent to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 text-cream">
-            <p className="text-[11px] uppercase tracking-[0.28em] text-brass">A briefing desk, not a robot lawyer</p>
-            <h2 className="font-serif text-3xl md:text-5xl mt-2 max-w-2xl leading-[1.12]">
-              Walk in already knowing what the paper says.
-            </h2>
-          </div>
-        </div>
-        <div className="p-6 md:p-10">
-          <p className="max-w-2xl text-slate leading-relaxed">
-            Load a lease, offer letter, NDA, or policy. Second Chair translates the clauses,
-            maps money and lock-in, compares two versions, and packs the questions worth a
-            lawyer’s time.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <button className="btn btn-primary" onClick={onOpenSample}>
-              Try the sample lease
-            </button>
-            <a href="/architecture" className="btn btn-ghost">
-              See GenAI mapping
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid sm:grid-cols-2 gap-3">
-        {USE_CASES.map((u) => (
-          <article key={u.id} className="paper-card rounded-studio p-5">
-            <p className="text-[11px] uppercase tracking-[0.16em] text-brass">{u.where}</p>
-            <h3 className="font-serif text-lg mt-1 leading-snug">{u.challenge}</h3>
-            <p className="text-sm text-slate mt-2 leading-relaxed">{u.how}</p>
-          </article>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 function RiskPill({ risk }: { risk: RiskLevel }) {
   return (
