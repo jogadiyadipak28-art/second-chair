@@ -18,7 +18,7 @@ import type {
   LegalDocument,
   RiskLevel,
 } from "@/lib/types";
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useCallback, useRef, useState } from "react";
 
 type Tab = "understand" | "compare" | "ask" | "brief";
 
@@ -70,7 +70,7 @@ export default function Studio() {
     setError(null);
   }
 
-  async function onFiles(files: FileList | null) {
+  const onFiles = useCallback(async (files: FileList | null) => {
     if (!files?.length) return;
     try {
       setBusy("Reading file…");
@@ -84,9 +84,10 @@ export default function Studio() {
     } finally {
       setBusy(null);
     }
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeId]);
 
-  async function runAnalyze(doc: LegalDocument) {
+  const runAnalyze = useCallback(async (doc: LegalDocument) => {
     setBusy("Reading the document the way a careful assistant would…");
     setError(null);
     setTab("understand");
@@ -104,9 +105,9 @@ export default function Studio() {
     } finally {
       setBusy(null);
     }
-  }
+  }, []);
 
-  async function runCompare() {
+  const runCompare = useCallback(async () => {
     if (docs.length < 2) {
       setError("Load a second document to compare.");
       return;
@@ -120,12 +121,7 @@ export default function Studio() {
       const res = await fetch("/api/compare", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          aName: a.name,
-          aText: a.text,
-          bName: b.name,
-          bText: b.text,
-        }),
+        body: JSON.stringify({ aName: a.name, aText: a.text, bName: b.name, bText: b.text }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Compare failed");
@@ -135,9 +131,9 @@ export default function Studio() {
     } finally {
       setBusy(null);
     }
-  }
+  }, [docs, active]);
 
-  async function runBriefing() {
+  const runBriefing = useCallback(async () => {
     if (!docs.length) return;
     setBusy("Packing a walk-in brief for a licensed lawyer…");
     setError(null);
@@ -146,10 +142,7 @@ export default function Studio() {
       const res = await fetch("/api/briefing", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          goal,
-          docs: docs.map((d) => ({ name: d.name, text: d.text })),
-        }),
+        body: JSON.stringify({ goal, docs: docs.map((d) => ({ name: d.name, text: d.text })) }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Briefing failed");
@@ -159,9 +152,9 @@ export default function Studio() {
     } finally {
       setBusy(null);
     }
-  }
+  }, [docs, goal]);
 
-  async function sendQuestion() {
+  const sendQuestion = useCallback(async () => {
     if (!question.trim() || !docs.length) return;
     const q = question.trim();
     setQuestion("");
@@ -185,15 +178,12 @@ export default function Studio() {
     } catch (e) {
       setMessages([
         ...nextHistory,
-        {
-          role: "assistant",
-          content: e instanceof Error ? e.message : "Could not answer.",
-        },
+        { role: "assistant", content: e instanceof Error ? e.message : "Could not answer." },
       ]);
     } finally {
       setBusy(null);
     }
-  }
+  }, [question, docs, messages]);
 
   const riskCounts = useMemo(() => {
     const clauses = analysis?.clauses || [];
@@ -390,10 +380,33 @@ export default function Studio() {
 
 
 function RiskPill({ risk }: { risk: RiskLevel }) {
+  return <span className={`chip risk-${risk}`}>{risk}</span>;
+}
+const MemoRiskPill = React.memo(RiskPill);
+
+function Fact({ label, items }: { label: string; items: string[] }) {
   return (
-    <span className={`chip risk-${risk}`}>{risk}</span>
+    <div>
+      <p className="text-xs uppercase tracking-widest text-slate">{label}</p>
+      <ul className="mt-2 space-y-1">
+        {items.map((x) => <li key={x}>{x}</li>)}
+      </ul>
+    </div>
   );
 }
+const MemoFact = React.memo(Fact);
+
+function GridList({ title, items }: { title: string; items: string[] }) {
+  return (
+    <article className="paper-card rounded-studio p-6">
+      <h2 className="font-serif text-2xl">{title}</h2>
+      <ul className="mt-3 list-disc pl-5 space-y-1 text-sm">
+        {items.map((x) => <li key={x}>{x}</li>)}
+      </ul>
+    </article>
+  );
+}
+const MemoGridList = React.memo(GridList);
 
 function Understand({
   doc,
@@ -447,9 +460,9 @@ function Understand({
           <span className="chip risk-low">{riskCounts.low} lower</span>
         </div>
         <div className="mt-6 grid md:grid-cols-3 gap-4 text-sm">
-          <Fact label="Parties" items={analysis.parties} />
-          <Fact label="Money the text mentions" items={analysis.moneyTerms} />
-          <Fact label="Dates & windows" items={analysis.datesAndDeadlines} />
+          <MemoFact label="Parties" items={analysis.parties} />
+          <MemoFact label="Money the text mentions" items={analysis.moneyTerms} />
+          <MemoFact label="Dates & windows" items={analysis.datesAndDeadlines} />
         </div>
       </section>
 
@@ -483,7 +496,7 @@ function Understand({
           <article key={`${c.title}-${i}`} className="paper-card rounded-studio p-5">
             <div className="flex flex-wrap items-center gap-2 justify-between">
               <h3 className="font-serif text-xl">{c.title}</h3>
-              <RiskPill risk={c.risk} />
+              <MemoRiskPill risk={c.risk} />
             </div>
             <div className="mt-2 flex flex-wrap gap-1">
               {c.tags.map((t) => (
@@ -559,19 +572,6 @@ function Understand({
   );
 }
 
-function Fact({ label, items }: { label: string; items: string[] }) {
-  return (
-    <div>
-      <p className="text-xs uppercase tracking-widest text-slate">{label}</p>
-      <ul className="mt-2 space-y-1">
-        {items.map((x) => (
-          <li key={x}>{x}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
 function CompareView({
   docs,
   comparison,
@@ -614,7 +614,7 @@ function CompareView({
         <article key={f.topic} className="paper-card rounded-studio p-5">
           <div className="flex justify-between gap-3">
             <h3 className="font-serif text-xl">{f.topic}</h3>
-            <RiskPill risk={f.risk} />
+            <MemoRiskPill risk={f.risk} />
           </div>
           <div className="mt-3 grid md:grid-cols-2 gap-3 text-sm">
             <div className="bg-cream/80 p-3">
@@ -776,7 +776,7 @@ function BriefView({
             <h2 className="font-serif text-2xl">Situation in plain English</h2>
             <p className="mt-2 leading-relaxed">{briefing.situationInPlainEnglish}</p>
           </article>
-          <GridList title="Goals to clarify first" items={briefing.goalsToClarify} />
+          <MemoGridList title="Goals to clarify first" items={briefing.goalsToClarify} />
           <article className="paper-card rounded-studio p-6">
             <h2 className="font-serif text-2xl">Questions for a licensed lawyer</h2>
             <ol className="mt-3 space-y-3">
@@ -788,28 +788,15 @@ function BriefView({
               ))}
             </ol>
           </article>
-          <GridList title="Bring these if you have them" items={briefing.documentsToBring} />
-          <GridList title="Red flags to mention in the first five minutes" items={briefing.redFlagsToMention} />
-          <GridList title="Practical next steps (not legal advice)" items={briefing.nextStepsYouCanTake} />
+          <MemoGridList title="Bring these if you have them" items={briefing.documentsToBring} />
+          <MemoGridList title="Red flags to mention in the first five minutes" items={briefing.redFlagsToMention} />
+          <MemoGridList title="Practical next steps (not legal advice)" items={briefing.nextStepsYouCanTake} />
           <button className="btn btn-ghost no-print" onClick={() => window.print()}>
             Print / save as PDF
           </button>
         </div>
       )}
     </div>
-  );
-}
-
-function GridList({ title, items }: { title: string; items: string[] }) {
-  return (
-    <article className="paper-card rounded-studio p-6">
-      <h2 className="font-serif text-2xl">{title}</h2>
-      <ul className="mt-3 list-disc pl-5 space-y-1 text-sm">
-        {items.map((x) => (
-          <li key={x}>{x}</li>
-        ))}
-      </ul>
-    </article>
   );
 }
 
