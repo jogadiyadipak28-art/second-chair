@@ -17,7 +17,7 @@ function WordReveal({ text, className = "" }: { text: string; className?: string
       y: "0%",
       opacity: 1,
       rotateX: 0,
-      transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] },
+      transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
     },
   };
   return (
