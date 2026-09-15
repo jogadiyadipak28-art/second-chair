@@ -1,6 +1,6 @@
 /**
- * Sole GenAI adapter. Calls Google Gemini via the OpenAI-compatible endpoint
- * (POST {OPENAI_BASE_URL}/chat/completions, default model gemini-2.0-flash).
+ * Sole GenAI adapter. Calls models via OpenRouter (OpenAI-compatible endpoint)
+ * (POST {OPENAI_BASE_URL}/chat/completions, default model google/gemini-2.0-flash-001).
  * Used by /api/analyze, /api/compare, /api/chat, and /api/briefing.
  */
 import { DISCLAIMER, SYSTEM_GUARDRAILS } from "./prompts";
@@ -11,12 +11,12 @@ export function hasModelKey() {
 
 /** Runtime view of the single GenAI service (no secrets). */
 export function getGenAIRuntime() {
-  const base = (process.env.OPENAI_BASE_URL || "https://generativelanguage.googleapis.com/v1beta/openai").replace(/\/$/, "");
+  const base = (process.env.OPENAI_BASE_URL || "https://openrouter.ai/api/v1").replace(/\/$/, "");
   return {
     live: hasModelKey(),
-    service: "Google Gemini API (OpenAI-compatible endpoint)",
+    service: "OpenRouter (Google Gemini 2.0 Flash)",
     endpoint: `${base}/chat/completions`,
-    model: process.env.OPENAI_MODEL || "gemini-2.0-flash",
+    model: process.env.OPENAI_MODEL || "google/gemini-2.0-flash-001",
     adapter: "lib/ai.ts",
   };
 }
@@ -34,29 +34,36 @@ async function complete(userPrompt: string, json: boolean) {
   if (!key) {
     throw new Error("NO_KEY");
   }
-  const base = (process.env.OPENAI_BASE_URL || "https://generativelanguage.googleapis.com/v1beta/openai").replace(/\/$/, "");
-  const model = process.env.OPENAI_MODEL || "gemini-2.0-flash";
+  const base = (process.env.OPENAI_BASE_URL || "https://openrouter.ai/api/v1").replace(/\/$/, "");
+  const model = process.env.OPENAI_MODEL || "google/gemini-2.0-flash-001";
 
-  const res = await fetch(`${base}/chat/completions`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${key}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model,
-      temperature: 0.2,
-      ...(json ? { response_format: { type: "json_object" } } : {}),
-      messages: [
-        { role: "system", content: `${SYSTEM_GUARDRAILS}\n\nPublic disclaimer to respect: ${DISCLAIMER}` },
-        { role: "user", content: userPrompt },
-      ],
-    }),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${base}/chat/completions`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${key}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model,
+        temperature: 0.2,
+        ...(json ? { response_format: { type: "json_object" } } : {}),
+        messages: [
+          { role: "system", content: `${SYSTEM_GUARDRAILS}\n\nPublic disclaimer to respect: ${DISCLAIMER}` },
+          { role: "user", content: userPrompt },
+        ],
+      }),
+    });
+  } catch (networkErr) {
+    throw new Error(
+      `Network error reaching Gemini endpoint (${base}): ${networkErr instanceof Error ? networkErr.message : String(networkErr)}`
+    );
+  }
 
   if (!res.ok) {
     const err = await res.text();
-    throw new Error(`MODEL_ERROR ${res.status}: ${err.slice(0, 400)}`);
+    throw new Error(`GEMINI_ERROR ${res.status}: ${err.slice(0, 400)}`);
   }
 
   const data = (await res.json()) as {

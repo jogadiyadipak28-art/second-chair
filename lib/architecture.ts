@@ -4,11 +4,11 @@
  */
 
 export const GENAI_SERVICE = {
-  name: "Google Gemini API (OpenAI-compatible endpoint)",
-  vendor: "Google AI Studio",
-  protocol: "HTTPS POST /v1beta/openai/chat/completions",
-  defaultEndpoint: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
-  defaultModel: "gemini-2.0-flash",
+  name: "OpenRouter — Google Gemini 2.0 Flash",
+  vendor: "OpenRouter (openrouter.ai)",
+  protocol: "HTTPS POST /v1/chat/completions (OpenAI-compatible)",
+  defaultEndpoint: "https://openrouter.ai/api/v1/chat/completions",
+  defaultModel: "google/gemini-2.0-flash-001",
   env: ["OPENAI_API_KEY", "OPENAI_BASE_URL", "OPENAI_MODEL"],
   adapterFile: "lib/ai.ts",
   method: "complete() / completeJson() / completeText()",
@@ -21,7 +21,7 @@ export const GENAI_INTEGRATION_POINTS = [
     route: "POST /api/analyze",
     routeFile: "app/api/analyze/route.ts",
     promptFn: "analysisPrompt() in lib/prompts.ts",
-    modelCall: "completeJson() in lib/ai.ts → Gemini Chat Completions, response_format=json_object",
+    modelCall: "completeJson() in lib/ai.ts → OpenRouter Chat Completions, response_format=json_object",
     fallback: "lib/demo.ts curated analysis when OPENAI_API_KEY is missing (sample docs only)",
   },
   {
@@ -30,7 +30,7 @@ export const GENAI_INTEGRATION_POINTS = [
     route: "POST /api/compare",
     routeFile: "app/api/compare/route.ts",
     promptFn: "comparePrompt() in lib/prompts.ts",
-    modelCall: "completeJson() in lib/ai.ts → Gemini Chat Completions, response_format=json_object",
+    modelCall: "completeJson() in lib/ai.ts → OpenRouter Chat Completions, response_format=json_object",
     fallback: "DEMO_COMPARE in lib/demo.ts when no API key",
   },
   {
@@ -39,7 +39,7 @@ export const GENAI_INTEGRATION_POINTS = [
     route: "POST /api/chat",
     routeFile: "app/api/chat/route.ts",
     promptFn: "chatPrompt() in lib/prompts.ts",
-    modelCall: "completeText() in lib/ai.ts → Gemini Chat Completions (free-text, not JSON mode)",
+    modelCall: "completeText() in lib/ai.ts → OpenRouter Chat Completions (free-text, not JSON mode)",
     fallback: "Template demo answer in app/api/chat/route.ts when no API key",
   },
   {
@@ -48,7 +48,7 @@ export const GENAI_INTEGRATION_POINTS = [
     route: "POST /api/briefing",
     routeFile: "app/api/briefing/route.ts",
     promptFn: "briefingPrompt() in lib/prompts.ts",
-    modelCall: "completeJson() in lib/ai.ts → Gemini Chat Completions, response_format=json_object",
+    modelCall: "completeJson() in lib/ai.ts → OpenRouter Chat Completions, response_format=json_object",
     fallback: "DEMO_BRIEFING in lib/demo.ts when no API key",
   },
 ] as const;
@@ -62,7 +62,7 @@ export const NOT_GENAI = [
   {
     piece: "Guided demo analyses",
     where: "lib/demo.ts",
-    role: "Static educational JSON used only when no live Gemini API key is configured.",
+    role: "Static educational JSON used only when no live OpenRouter API key is configured.",
   },
   {
     piece: "Status probe",
