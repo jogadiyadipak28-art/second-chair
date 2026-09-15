@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   title: "Second Chair — understand legal papers before you walk in",
   description:
     "Educational GenAI that translates contracts into plain language, maps risks, compares documents, and prepares questions for a licensed lawyer. Not legal advice.",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
