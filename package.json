@@ -5,8 +5,8 @@
   "description": "Second Chair — GenAI legal literacy and walk-in briefing, not legal advice.",
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=--use-system-ca next dev",
-    "build": "cross-env NODE_OPTIONS=--use-system-ca next build",
-    "start": "cross-env NODE_OPTIONS=--use-system-ca next start"
+    "build": "next build",
+    "start": "next start"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",
