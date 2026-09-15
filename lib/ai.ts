@@ -9,7 +9,7 @@ import { DISCLAIMER, SYSTEM_GUARDRAILS } from "./prompts";
 function getClient() {
   return new OpenAI({
     apiKey: process.env.OPENAI_API_KEY!,
-    baseURL: (process.env.OPENAI_BASE_URL || "https://generativelanguage.googleapis.com/v1beta/openai").replace(/\/$/, ""),
+    baseURL: (process.env.OPENAI_BASE_URL ?? "").replace(/\/$/, "") || undefined,
   });
 }
 
@@ -19,7 +19,7 @@ export function hasModelKey() {
 
 /** Runtime view of the single GenAI service (no secrets). */
 export function getGenAIRuntime() {
-  const base = (process.env.OPENAI_BASE_URL || "https://generativelanguage.googleapis.com/v1beta/openai").replace(/\/$/, "");
+  const base = (process.env.OPENAI_BASE_URL ?? "").replace(/\/$/, "");
   return {
     live: hasModelKey(),
     service: "Google AI Studio (Gemini 3.6 Flash)",
