@@ -782,6 +782,12 @@ function AskView({
   onSend: () => void;
   busy: boolean;
 }) {
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, busy]);
+
   return (
     <div>
       <p className="text-sm text-slate mb-4">
@@ -817,6 +823,14 @@ function AskView({
             {m.content}
           </div>
         ))}
+        {busy && (
+          <div className="paper-card rounded-2xl p-4 mr-6 md:mr-16 flex items-center gap-1.5">
+            <span className="text-xs text-slate italic mr-1">Thinking</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-brass animate-bounce [animation-delay:0ms]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-brass animate-bounce [animation-delay:150ms]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-brass animate-bounce [animation-delay:300ms]" />
+          </div>
+        )}
       </div>
       <form
         className="flex gap-2"
@@ -835,6 +849,7 @@ function AskView({
           Ask
         </button>
       </form>
+      <div ref={bottomRef} />
     </div>
   );
 }
