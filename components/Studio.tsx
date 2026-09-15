@@ -1,6 +1,7 @@
 "use client";
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { motion } from "framer-motion";
 import { Logo } from "@/components/Brand";
 import { IconBrief, IconChat, IconDoc, IconSplit } from "@/components/Icons";
 import { readFileAsDocument } from "@/lib/extract";
@@ -428,27 +429,7 @@ export default function Studio() {
                 </div>
               </div>
 
-              <nav className="tab-track mb-5 no-print overflow-x-auto">
-                {(
-                  [
-                    ["understand", "Simplify", IconDoc],
-                    ["compare", "Compare", IconSplit],
-                    ["ask", "Ask", IconChat],
-                    ["brief", "Next steps", IconBrief],
-                  ] as [Tab, string, typeof IconDoc][]
-                ).map(([id, label, Icon]) => (
-                  <button
-                    key={id}
-                    className={`flex-1 min-w-[7rem] rounded-full px-3 py-2 text-sm inline-flex items-center justify-center gap-2 transition ${
-                      tab === id ? "bg-ink text-cream shadow-sm" : "text-slate hover:text-ink"
-                    }`}
-                    onClick={() => setTab(id)}
-                  >
-                    <Icon className="h-4 w-4" />
-                    {label}
-                  </button>
-                ))}
-              </nav>
+              <GlassNav tab={tab} setTab={setTab} />
 
               {busy && (
                 <p className="mb-4 text-sm text-brass italic paper-card rounded-full px-4 py-2 inline-block">
@@ -964,5 +945,65 @@ function GridList({ title, items }: { title: string; items: string[] }) {
         ))}
       </ul>
     </article>
+  );
+}
+
+// ── Glassmorphism tab navigation ─────────────────────────────────────────────
+
+const TAB_ITEMS: { id: Tab; label: string; Icon: typeof IconDoc }[] = [
+  { id: "understand", label: "Simplify",    Icon: IconDoc   },
+  { id: "compare",   label: "Compare",     Icon: IconSplit  },
+  { id: "ask",       label: "Ask",         Icon: IconChat   },
+  { id: "brief",     label: "Next steps",  Icon: IconBrief  },
+];
+
+function GlassNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
+  return (
+    <nav
+      className="mb-5 no-print flex justify-center"
+      aria-label="Content tabs"
+    >
+      <div
+        className="flex items-center gap-1 py-1 px-1 rounded-full border border-ink/8 shadow-soft"
+        style={{
+          background: "rgba(255,255,255,0.45)",
+          backdropFilter: "blur(20px) saturate(180%)",
+          WebkitBackdropFilter: "blur(20px) saturate(180%)",
+        }}
+      >
+        {TAB_ITEMS.map(({ id, label, Icon }) => {
+          const isActive = tab === id;
+          return (
+            <button
+              key={id}
+              onClick={() => setTab(id)}
+              className={`relative cursor-pointer text-sm font-medium px-4 py-2 rounded-full transition-all duration-300 inline-flex items-center gap-2 ${
+                isActive
+                  ? "text-ink bg-white/60"
+                  : "text-slate hover:text-ink hover:bg-white/30"
+              }`}
+            >
+              {/* animated background pill */}
+              {isActive && (
+                <motion.div
+                  layoutId="glass-tab-indicator"
+                  className="absolute inset-0 rounded-full bg-white/60 shadow-sm -z-10"
+                  initial={false}
+                  transition={{ type: "spring", stiffness: 380, damping: 36 }}
+                >
+                  {/* glow lamp on top edge */}
+                  <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-8 h-1 rounded-t-full bg-ink/40">
+                    <div className="absolute w-12 h-5 rounded-full blur-md -top-2 -left-2 bg-ink/10" />
+                    <div className="absolute w-7 h-5 rounded-full blur-md -top-1 bg-ink/10" />
+                  </div>
+                </motion.div>
+              )}
+              <Icon className="h-4 w-4 shrink-0" />
+              <span className="hidden sm:inline">{label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </nav>
   );
 }
