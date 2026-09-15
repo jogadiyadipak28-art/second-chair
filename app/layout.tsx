@@ -14,11 +14,9 @@ export const metadata: Metadata = {
     "Educational GenAI that translates contracts into plain language, maps risks, compares documents, and prepares questions for a licensed lawyer. Not legal advice.",
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "32x32", type: "image/x-icon" },
       { url: "/favicon.svg", type: "image/svg+xml" },
     ],
-    shortcut: "/favicon.ico",
-    apple: "/favicon.ico",
+    shortcut: "/favicon.svg",
   },
 };
 
