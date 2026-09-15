@@ -7,19 +7,30 @@ import { completeJson, hasModelKey, parseJson } from "@/lib/ai";
 import { DEMO_BRIEFING } from "@/lib/demo";
 import { briefingPrompt } from "@/lib/prompts";
 import { excerpt } from "@/lib/samples";
+import { validateDocs, validateGoal } from "@/lib/validate";
 import type { BriefingPack } from "@/lib/types";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
-  const body = (await req.json()) as {
-    docs?: { name: string; text: string }[];
-    goal?: string;
-    forceDemo?: boolean;
-  };
-  const docs = (body.docs || []).filter((d) => d.text?.trim());
-  if (!docs.length) {
-    return NextResponse.json({ error: "Add a document first." }, { status: 400 });
+  let body: { docs?: unknown; goal?: unknown; forceDemo?: boolean };
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
+  }
+
+  let docs: Array<{ name: string; text: string }>;
+  let goal: string;
+
+  try {
+    docs = validateDocs(body.docs);
+    goal = validateGoal(body.goal);
+  } catch (e) {
+    return NextResponse.json(
+      { error: e instanceof Error ? e.message : "Invalid input." },
+      { status: 400 },
+    );
   }
 
   const block = docs
@@ -31,11 +42,8 @@ export async function POST(req: Request) {
   }
 
   try {
-    const raw = await completeJson(briefingPrompt(block, body.goal || ""));
-    return NextResponse.json({
-      briefing: parseJson<BriefingPack>(raw),
-      mode: "live",
-    });
+    const raw = await completeJson(briefingPrompt(block, goal));
+    return NextResponse.json({ briefing: parseJson<BriefingPack>(raw), mode: "live" });
   } catch {
     return NextResponse.json({ briefing: DEMO_BRIEFING, mode: "demo-fallback" });
   }

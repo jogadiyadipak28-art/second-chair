@@ -325,17 +325,19 @@ export default function Studio() {
                   <h1 className="font-serif text-3xl md:text-4xl mt-1 leading-tight truncate">{active.name}</h1>
                 </div>
                 <div className="flex flex-wrap gap-2 no-print">
-                  <button disabled={!!busy} className="btn btn-moss" onClick={() => runAnalyze(active)}>
+                  <button disabled={!!busy} className="btn btn-moss" onClick={() => runAnalyze(active)} aria-label="Analyse and simplify this document">
                     Understand this
                   </button>
                   <button
                     disabled={!!busy || docs.length < 2}
                     className="btn btn-ghost"
                     onClick={runCompare}
+                    aria-label="Compare two loaded documents"
+                    aria-disabled={docs.length < 2}
                   >
                     Compare pair
                   </button>
-                  <button disabled={!!busy} className="btn btn-ghost" onClick={runBriefing}>
+                  <button disabled={!!busy} className="btn btn-ghost" onClick={runBriefing} aria-label="Generate a walk-in briefing pack">
                     Walk-in brief
                   </button>
                 </div>
@@ -344,45 +346,39 @@ export default function Studio() {
               <GlassNav tab={tab} setTab={setTab} />
 
               {busy && (
-                <p className="mb-4 text-sm text-brass italic paper-card rounded-full px-4 py-2 inline-block">
+                <p className="mb-4 text-sm text-brass italic paper-card rounded-full px-4 py-2 inline-block" role="status" aria-live="polite" aria-busy="true">
                   {busy}
                 </p>
               )}
               {error && (
-                <p className="mb-4 text-sm text-rust paper-card rounded-xl px-4 py-2">{error}</p>
+                <p className="mb-4 text-sm text-rust paper-card rounded-xl px-4 py-2" role="alert">{error}</p>
               )}
 
               {tab === "understand" && (
-                <Understand
-                  doc={active}
-                  analysis={analysis}
-                  riskCounts={riskCounts}
-                />
+                <section role="tabpanel" id="tabpanel-understand" aria-labelledby="tab-understand">
+                  <Understand doc={active} analysis={analysis} riskCounts={riskCounts} />
+                </section>
               )}
               {tab === "compare" && (
-                <CompareView
-                  docs={docs}
-                  comparison={comparison}
-                  onRun={runCompare}
-                />
+                <section role="tabpanel" id="tabpanel-compare" aria-labelledby="tab-compare">
+                  <CompareView docs={docs} comparison={comparison} onRun={runCompare} />
+                </section>
               )}
               {tab === "ask" && (
-                <AskView
-                  messages={messages}
-                  question={question}
-                  setQuestion={setQuestion}
-                  onSend={sendQuestion}
-                  busy={!!busy}
-                />
+                <section role="tabpanel" id="tabpanel-ask" aria-labelledby="tab-ask">
+                  <AskView
+                    messages={messages}
+                    question={question}
+                    setQuestion={setQuestion}
+                    onSend={sendQuestion}
+                    busy={!!busy}
+                  />
+                </section>
               )}
               {tab === "brief" && (
-                <BriefView
-                  goal={goal}
-                  setGoal={setGoal}
-                  briefing={briefing}
-                  onRun={runBriefing}
-                  busy={!!busy}
-                />
+                <section role="tabpanel" id="tabpanel-brief" aria-labelledby="tab-brief">
+                  <BriefView goal={goal} setGoal={setGoal} briefing={briefing} onRun={runBriefing} busy={!!busy} />
+                </section>
               )}
             </>
           )}
@@ -680,7 +676,7 @@ function AskView({
       <p className="text-sm text-slate mb-4">
         Questions are answered from the loaded text. If it is not in the paper, the assistant should say so.
       </p>
-      <div className="space-y-3 mb-4">
+      <div className="space-y-3 mb-4" aria-live="polite" aria-label="Chat messages" role="log">
         {messages.length === 0 && (
           <div className="flex flex-wrap gap-2">
             {[
@@ -731,6 +727,7 @@ function AskView({
           placeholder="Ask about a clause, deadline, or fee…"
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
+          aria-label="Ask a question about the document"
         />
         <button className="btn btn-primary" disabled={busy || !question.trim()}>
           Ask
@@ -760,12 +757,14 @@ function BriefView({
         Options, next steps, checklists, and questions for a licensed lawyer — preparation, not advice.
       </p>
       <div className="paper-card rounded-studio p-5">
-        <label className="text-sm">What do you want help preparing for?</label>
+        <label className="text-sm" htmlFor="briefing-goal">What do you want help preparing for?</label>
         <textarea
+          id="briefing-goal"
           className="field mt-2 h-24 resize-y"
           placeholder="e.g. I have to sign this lease by Friday and I work from home. I want to know what to ask a tenants' lawyer."
           value={goal}
           onChange={(e) => setGoal(e.target.value)}
+          aria-describedby="briefing-goal-hint"
         />
         <button className="btn btn-moss mt-3" disabled={busy} onClick={onRun}>
           Build walk-in pack
@@ -827,9 +826,11 @@ function GlassNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
   return (
     <nav
       className="mb-5 no-print flex justify-center"
-      aria-label="Content tabs"
+      aria-label="Document analysis tabs"
     >
       <div
+        role="tablist"
+        aria-label="Analysis views"
         className="flex items-center gap-1 py-1 px-1 rounded-full border border-ink/8 shadow-soft"
         style={{
           background: "rgba(255,255,255,0.45)",
@@ -842,6 +843,10 @@ function GlassNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
           return (
             <button
               key={id}
+              role="tab"
+              aria-selected={isActive}
+              aria-controls={`tabpanel-${id}`}
+              id={`tab-${id}`}
               onClick={() => setTab(id)}
               className={`relative cursor-pointer text-sm font-medium px-4 py-2 rounded-full transition-all duration-300 inline-flex items-center gap-2 ${
                 isActive
@@ -864,7 +869,7 @@ function GlassNav({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
                   </div>
                 </motion.div>
               )}
-              <Icon className="h-4 w-4 shrink-0" />
+              <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
               <span className="hidden sm:inline">{label}</span>
             </button>
           );
