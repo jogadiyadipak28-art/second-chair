@@ -9,7 +9,7 @@ import { DISCLAIMER, SYSTEM_GUARDRAILS } from "./prompts";
 function getClient() {
   return new OpenAI({
     apiKey: process.env.OPENAI_API_KEY!,
-    baseURL: (process.env.OPENAI_BASE_URL || "https://openrouter.ai/api/v1").replace(/\/$/, ""),
+    baseURL: (process.env.OPENAI_BASE_URL || "https://generativelanguage.googleapis.com/v1beta/openai").replace(/\/$/, ""),
   });
 }
 
@@ -19,12 +19,12 @@ export function hasModelKey() {
 
 /** Runtime view of the single GenAI service (no secrets). */
 export function getGenAIRuntime() {
-  const base = (process.env.OPENAI_BASE_URL || "https://openrouter.ai/api/v1").replace(/\/$/, "");
+  const base = (process.env.OPENAI_BASE_URL || "https://generativelanguage.googleapis.com/v1beta/openai").replace(/\/$/, "");
   return {
     live: hasModelKey(),
-    service: "OpenRouter (Google Gemini 2.0 Flash)",
+    service: "Google AI Studio (Gemini 3.6 Flash)",
     endpoint: `${base}/chat/completions`,
-    model: process.env.OPENAI_MODEL || "google/gemini-2.0-flash-001",
+    model: process.env.OPENAI_MODEL || "gemini-3.6-flash",
     adapter: "lib/ai.ts",
   };
 }
@@ -43,7 +43,7 @@ async function complete(userPrompt: string, json: boolean) {
   }
 
   const client = getClient();
-  const model = process.env.OPENAI_MODEL || "google/gemini-2.0-flash-001";
+  const model = process.env.OPENAI_MODEL || "gemini-3.6-flash";
 
   const response = await client.chat.completions.create({
     model,

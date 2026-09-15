@@ -4,9 +4,9 @@
   "private": true,
   "description": "Second Chair — GenAI legal literacy and walk-in briefing, not legal advice.",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
+    "dev": "cross-env NODE_OPTIONS=--use-system-ca next dev",
+    "build": "cross-env NODE_OPTIONS=--use-system-ca next build",
+    "start": "cross-env NODE_OPTIONS=--use-system-ca next start"
   },
   "dependencies": {
     "next": "^14.2.15",
@@ -20,6 +20,7 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.20",
+    "cross-env": "^10.1.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
     "typescript": "^5.6.3"

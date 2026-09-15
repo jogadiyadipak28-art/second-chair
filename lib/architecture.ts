@@ -4,11 +4,11 @@
  */
 
 export const GENAI_SERVICE = {
-  name: "OpenRouter — Google Gemini 2.0 Flash",
-  vendor: "OpenRouter (openrouter.ai)",
-  protocol: "HTTPS POST /v1/chat/completions (OpenAI-compatible)",
-  defaultEndpoint: "https://openrouter.ai/api/v1/chat/completions",
-  defaultModel: "google/gemini-2.0-flash-001",
+  name: "Google AI Studio — Gemini 3.6 Flash",
+  vendor: "Google AI Studio",
+  protocol: "HTTPS POST /v1beta/openai/chat/completions (OpenAI-compatible)",
+  defaultEndpoint: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+  defaultModel: "gemini-3.6-flash",
   env: ["OPENAI_API_KEY", "OPENAI_BASE_URL", "OPENAI_MODEL"],
   adapterFile: "lib/ai.ts",
   method: "complete() / completeJson() / completeText()",

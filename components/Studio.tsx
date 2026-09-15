@@ -250,7 +250,7 @@ export default function Studio() {
             <span
               className={`chip ${live ? "text-moss border-moss/20 bg-moss/10" : "text-brass border-brass/25 bg-brass/10"}`}
             >
-              {live ? "Live · Gemini via OpenRouter" : "Guided demo"}
+              {live ? "Live · Gemini 3.6 Flash" : "Guided demo"}
             </span>
           </div>
         </div>
