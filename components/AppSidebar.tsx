@@ -130,17 +130,17 @@ export function AppSidebar({
                   key={id}
                   onClick={() => { setCollapsed(false); setActiveNav(id); }}
                   className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-ink/6 transition-colors"
-                  title={NAV_ITEMS.find(n => n.id === id)?.label}
+                  aria-label={NAV_ITEMS.find(n => n.id === id)?.label}
                 >
-                  <Icon className="h-4 w-4 text-slate" />
+                  <Icon className="h-4 w-4 text-slate" aria-hidden="true" />
                 </button>
               ))}
               <button
                 onClick={() => fileRef.current?.click()}
                 className="mt-2 flex h-8 w-8 items-center justify-center rounded-lg bg-ink text-white hover:bg-ink/80 transition-colors"
-                title="Upload file"
+                aria-label="Upload file"
               >
-                <UploadIcon className="h-4 w-4" />
+                <UploadIcon className="h-4 w-4" aria-hidden="true" />
               </button>
               <input ref={fileRef} type="file" accept=".pdf,.txt,.md,text/plain,application/pdf" className="hidden" multiple onChange={(e) => onFiles(e.target.files)} />
             </motion.div>
@@ -169,10 +169,10 @@ export function AppSidebar({
                 {activeNav === "files" && (
                   <div className="space-y-3">
                     <div className="space-y-2">
-                      <button className="btn btn-primary w-full" onClick={() => fileRef.current?.click()}>
+                      <button className="btn btn-primary w-full" onClick={() => fileRef.current?.click()} aria-label="Upload PDF or text file">
                         Upload PDF or text
                       </button>
-                      <input ref={fileRef} type="file" accept=".pdf,.txt,.md,text/plain,application/pdf" className="hidden" multiple onChange={(e) => onFiles(e.target.files)} />
+                      <input ref={fileRef} type="file" accept=".pdf,.txt,.md,text/plain,application/pdf" className="hidden" multiple onChange={(e) => onFiles(e.target.files)} aria-label="Select PDF or text files to upload" />
                       <button className="btn btn-ghost w-full" onClick={() => setPasteOpen((v) => !v)}>
                         Paste text
                       </button>
@@ -184,12 +184,14 @@ export function AppSidebar({
                           value={pasteName}
                           onChange={(e) => setPasteName(e.target.value)}
                           placeholder="Document name"
+                          aria-label="Document name"
                         />
                         <textarea
                           className="field h-28 resize-y text-sm"
                           placeholder="Paste the clause or whole document…"
                           value={pasteText}
                           onChange={(e) => setPasteText(e.target.value)}
+                          aria-label="Paste document text"
                         />
                         <button
                           className="text-sm text-moss font-medium"
