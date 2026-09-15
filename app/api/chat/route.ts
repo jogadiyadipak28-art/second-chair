@@ -1,5 +1,5 @@
 /**
- * GenAI: OpenAI Chat Completions via completeText() in lib/ai.ts
+ * GenAI: Google Gemini via completeText() in lib/ai.ts
  * Product surface: Ask the file
  */
 import { NextResponse } from "next/server";

@@ -48,14 +48,14 @@ Second Chair sits in the middle: it translates the clauses into plain language, 
 | Framework | Next.js 14 (App Router) |
 | Language | TypeScript |
 | Styling | Tailwind CSS |
-| AI | OpenAI Chat Completions API (`gpt-4o-mini` by default) |
+| AI | Google Gemini API — `gemini-2.0-flash` (via OpenAI-compatible endpoint) |
 | PDF extraction | PDF.js (client-side, no server upload) |
 
 ---
 
 ## GenAI Architecture
 
-**One generative service:** the **OpenAI Chat Completions API** (`POST /v1/chat/completions`). Default model: `gpt-4o-mini`. Any OpenAI-compatible host can be swapped via environment variables.
+**One generative service:** the **Google Gemini API** via its OpenAI-compatible endpoint (`POST /v1beta/openai/chat/completions`). Default model: `gemini-2.0-flash`. The base URL and model can be swapped via environment variables.
 
 All model traffic goes through a single adapter — `lib/ai.ts` (`completeJson` / `completeText`). Prompts live in `lib/prompts.ts`. Guardrails (no legal advice) are enforced in the system message.
 
@@ -75,9 +75,9 @@ All model traffic goes through a single adapter — `lib/ai.ts` (`completeJson` 
 Browser (Studio)
   → POST /api/{analyze|compare|chat|briefing}
     → lib/prompts.ts  (task-specific prompt)
-    → lib/ai.ts       (OpenAI Chat Completions)
+    → lib/ai.ts       (Google Gemini — OpenAI-compatible)
          ↓
-    OpenAI (or compatible) gpt-4o-mini
+    Gemini gemini-2.0-flash
 ```
 
 The live **GenAI architecture** page at `/architecture` shows the same mapping at runtime.
@@ -92,7 +92,7 @@ npm install
 
 # 2. Set up environment
 cp .env.example .env.local
-# Add your OPENAI_API_KEY (optional — guided demo works without it)
+# Add your OPENAI_API_KEY — your Gemini API key from Google AI Studio
 
 # 3. Run locally
 npm run dev
@@ -103,9 +103,9 @@ Open [http://localhost:3000](http://localhost:3000).
 ### Environment Variables
 
 ```env
-OPENAI_API_KEY=sk-your-key
-OPENAI_BASE_URL=https://api.openai.com/v1   # swap for Azure, Groq, local, etc.
-OPENAI_MODEL=gpt-4o-mini
+OPENAI_API_KEY=your-gemini-api-key-from-google-ai-studio
+OPENAI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai
+OPENAI_MODEL=gemini-2.0-flash
 ```
 
 **Without an API key:** the three fictional samples (lease, freelance agreement, NDA) demonstrate the full interface using curated educational analyses.
@@ -131,7 +131,7 @@ components/
   Brand.tsx       # Logo and brand elements
   Icons.tsx       # SVG icon set
 lib/
-  ai.ts           # OpenAI adapter (completeJson / completeText)
+  ai.ts           # Gemini adapter via OpenAI-compatible endpoint (completeJson / completeText)
   prompts.ts      # All task-specific prompt builders
   types.ts        # Shared TypeScript types
   extract.ts      # PDF.js text extraction

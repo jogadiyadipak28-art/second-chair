@@ -1,6 +1,6 @@
 /**
- * Sole GenAI adapter. Calls OpenAI Chat Completions
- * (POST {OPENAI_BASE_URL}/chat/completions, default model gpt-4o-mini).
+ * Sole GenAI adapter. Calls Google Gemini via the OpenAI-compatible endpoint
+ * (POST {OPENAI_BASE_URL}/chat/completions, default model gemini-2.0-flash).
  * Used by /api/analyze, /api/compare, /api/chat, and /api/briefing.
  */
 import { DISCLAIMER, SYSTEM_GUARDRAILS } from "./prompts";
@@ -11,12 +11,12 @@ export function hasModelKey() {
 
 /** Runtime view of the single GenAI service (no secrets). */
 export function getGenAIRuntime() {
-  const base = (process.env.OPENAI_BASE_URL || "https://api.openai.com/v1").replace(/\/$/, "");
+  const base = (process.env.OPENAI_BASE_URL || "https://generativelanguage.googleapis.com/v1beta/openai").replace(/\/$/, "");
   return {
     live: hasModelKey(),
-    service: "OpenAI Chat Completions API",
+    service: "Google Gemini API (OpenAI-compatible endpoint)",
     endpoint: `${base}/chat/completions`,
-    model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+    model: process.env.OPENAI_MODEL || "gemini-2.0-flash",
     adapter: "lib/ai.ts",
   };
 }
@@ -34,8 +34,8 @@ async function complete(userPrompt: string, json: boolean) {
   if (!key) {
     throw new Error("NO_KEY");
   }
-  const base = (process.env.OPENAI_BASE_URL || "https://api.openai.com/v1").replace(/\/$/, "");
-  const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
+  const base = (process.env.OPENAI_BASE_URL || "https://generativelanguage.googleapis.com/v1beta/openai").replace(/\/$/, "");
+  const model = process.env.OPENAI_MODEL || "gemini-2.0-flash";
 
   const res = await fetch(`${base}/chat/completions`, {
     method: "POST",
