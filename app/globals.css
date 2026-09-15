@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --ink: #161410;
+  --paper: #efe8d9;
+  --cream: #f7f1e6;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  @apply text-ink font-sans antialiased;
+  background-color: #ece4d4;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 0% -10%, rgba(154, 123, 60, 0.14), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(61, 90, 69, 0.12), transparent 46%),
+    linear-gradient(180deg, #f4eee3 0%, #e8dfcf 100%);
+}
+
+::selection {
+  background: #e4d3a8;
+}
+
+.paper-card {
+  background: linear-gradient(180deg, rgba(255, 252, 247, 0.96) 0%, rgba(247, 241, 230, 0.94) 100%);
+  border: 1px solid rgba(28, 25, 21, 0.08);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset, 0 18px 40px -28px rgba(22, 20, 16, 0.45);
+}
+
+.btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium tracking-wide transition duration-200 disabled:opacity-40 disabled:pointer-events-none;
+}
+
+.btn-primary {
+  @apply bg-ink text-cream hover:bg-moss shadow-sm;
+}
+
+.btn-ghost {
+  @apply border border-ink/15 bg-white/50 text-ink hover:border-brass/70 hover:bg-white;
+}
+
+.btn-moss {
+  @apply bg-moss text-cream hover:brightness-110 shadow-sm;
+}
+
+.field {
+  @apply w-full rounded-xl border border-ink/10 bg-white/70 px-3 py-2 text-sm outline-none focus:border-brass focus:ring-2 focus:ring-brass/20;
+}
+
+.chip {
+  @apply text-[11px] tracking-wide rounded-full px-2.5 py-1 border border-ink/10 bg-white/60;
+}
+
+.risk-high {
+  background: #f4ddd6;
+  color: #6f2c20;
+}
+.risk-watch {
+  background: #f1e5c4;
+  color: #6a5018;
+}
+.risk-low {
+  background: #dce8df;
+  color: #2d4a35;
+}
+
+.tab-track {
+  @apply flex p-1 rounded-full bg-ink/[0.04] border border-ink/5;
+}
+
+.photo-frame {
+  @apply overflow-hidden relative;
+}
+
+.photo-frame img {
+  @apply w-full h-full object-cover;
+}
+
+@media print {
+  header,
+  aside,
+  .no-print {
+    display: none !important;
+  }
+}
