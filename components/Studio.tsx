@@ -1,5 +1,6 @@
 "use client";
 
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Logo } from "@/components/Brand";
 import { IconBrief, IconChat, IconDoc, IconSplit } from "@/components/Icons";
 import { readFileAsDocument } from "@/lib/extract";
@@ -206,32 +207,71 @@ export default function Studio() {
 
   if (!accepted) {
     return (
-      <main className="min-h-screen px-4 py-8 md:px-8 md:py-12">
-        <div className="max-w-5xl mx-auto paper-card rounded-studio overflow-hidden shadow-page grid md:grid-cols-2">
-          <div className="photo-frame min-h-[280px] md:min-h-full">
-            <img src="/images/welcome-contract.png" alt="Open contract, glasses, and a small brass chair paperweight" />
-          </div>
-          <div className="p-8 md:p-12 flex flex-col justify-center">
+      <DialogPrimitive.Root open={true}>
+        {/* Blurred app body behind the dialog */}
+        <div className="min-h-screen pointer-events-none select-none opacity-30 blur-sm">
+          <div className="max-w-[1440px] mx-auto px-5 py-24 flex flex-col items-center gap-6">
             <Logo />
-            <p className="text-brass tracking-[0.28em] text-[11px] uppercase mt-8">Not a law firm</p>
-            <h1 className="font-serif text-4xl md:text-[2.6rem] mt-3 leading-[1.15]">
-              Sit with the papers before you sit with counsel.
-            </h1>
-            <p className="mt-4 text-slate leading-relaxed">
-              In court, the second chair does not replace the lawyer. They prepare the file:
-              what the text says, what looks uneven, and what is worth the billed minute.
-            </p>
-            <p className="mt-5 text-sm text-slate leading-relaxed border-l-2 border-brass/70 pl-4">
-              This product explains and organizes information. It can be wrong. It is not legal
-              advice, it does not create an attorney-client relationship, and it is not a
-              substitute for a licensed professional in your jurisdiction.
-            </p>
-            <button className="btn btn-primary mt-8 w-full md:w-auto" onClick={() => setAccepted(true)}>
-              I understand — continue
-            </button>
           </div>
         </div>
-      </main>
+
+        <DialogPrimitive.Portal>
+          {/* Overlay */}
+          <DialogPrimitive.Overlay className="fixed inset-0 z-50 bg-ink/30 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+
+          {/* Dialog panel — styled after the sign-up dialog pattern */}
+          <DialogPrimitive.Content className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 paper-card rounded-studio p-8 shadow-page focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]">
+
+            {/* Icon + header — sign-up dialog pattern */}
+            <div className="flex flex-col items-center gap-3">
+              <div
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-ink/15 bg-white shadow-sm"
+                aria-hidden="true"
+              >
+                {/* Scales of justice icon */}
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-ink/70">
+                  <path d="M12 3v18M3 6l9-3 9 3M3 6l4 8a4 4 0 0 0 8 0l4-8M3 20h18" />
+                </svg>
+              </div>
+
+              <div className="text-center space-y-1.5">
+                <DialogPrimitive.Title className="font-serif text-2xl leading-snug">
+                  Second Chair
+                </DialogPrimitive.Title>
+                <p className="text-[11px] uppercase tracking-[0.22em] text-slate">
+                  Not a law firm
+                </p>
+              </div>
+            </div>
+
+            {/* Body copy */}
+            <div className="mt-6 space-y-4 text-sm text-slate leading-relaxed">
+              <p>
+                In court, the second chair does not replace the lawyer. They prepare the file:
+                what the text says, what looks uneven, and what is worth the billed minute.
+              </p>
+              <p className="border-l-2 border-ink/15 pl-4 text-[13px]">
+                This product explains and organizes information. It can be wrong. It is not legal
+                advice, it does not create an attorney-client relationship, and it is not a
+                substitute for a licensed professional in your jurisdiction.
+              </p>
+            </div>
+
+            {/* CTA */}
+            <button
+              className="btn btn-primary mt-8 w-full"
+              onClick={() => setAccepted(true)}
+            >
+              I understand — continue
+            </button>
+
+            {/* Footer note */}
+            <p className="mt-4 text-center text-xs text-slate/70">
+              By continuing you acknowledge this is not legal advice.
+            </p>
+          </DialogPrimitive.Content>
+        </DialogPrimitive.Portal>
+      </DialogPrimitive.Root>
     );
   }
 

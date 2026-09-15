@@ -9,6 +9,7 @@
     "start": "cross-env NODE_OPTIONS=--use-system-ca next start"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.23",
     "next": "^14.2.15",
     "openai": "^4.104.0",
     "pdfjs-dist": "^4.7.76",
