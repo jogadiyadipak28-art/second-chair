@@ -1,7 +1,7 @@
 export function Logo({ compact = false }: { compact?: boolean }) {
   return (
     <a href="/" className="flex items-center gap-3 min-w-0 group">
-      <span className="h-11 w-11 rounded-full overflow-hidden ring-1 ring-ink/10 shadow-sm shrink-0 bg-[#f4eee3]">
+      <span className="h-11 w-11 rounded-full overflow-hidden ring-1 ring-ink/10 shadow-sm shrink-0 bg-[#f5f5f5]">
         <img
           src="/images/mark-chair.png"
           alt=""

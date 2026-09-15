@@ -10,7 +10,7 @@ export const metadata = {
 export default function ArchitecturePage() {
   return (
     <main className="min-h-screen">
-      <header className="border-b border-ink/8 bg-[#f4eee3]/90 backdrop-blur-md sticky top-0 z-10">
+      <header className="border-b border-ink/8 bg-[#f5f5f5]/90 backdrop-blur-md sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-5 py-3.5 flex items-center justify-between">
           <Logo compact />
           <Link href="/" className="text-sm text-slate hover:text-ink">
@@ -21,9 +21,9 @@ export default function ArchitecturePage() {
       <div className="max-w-4xl mx-auto px-5 py-12">
         <div className="photo-frame rounded-studio h-48 mb-10 shadow-page">
           <img src="/images/hero-briefing-desk.png" alt="" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#161410]/70 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#141414]/70 to-transparent" />
           <div className="absolute inset-0 p-8 flex flex-col justify-end text-cream">
-            <p className="text-[11px] uppercase tracking-[0.28em] text-brass">Explicit mapping</p>
+            <p className="text-[11px] uppercase tracking-[0.28em] text-slate">Explicit mapping</p>
             <h1 className="font-serif text-4xl mt-1">Which GenAI is used, and where</h1>
           </div>
         </div>

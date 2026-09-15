@@ -237,7 +237,7 @@ export default function Studio() {
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-20 border-b border-ink/8 bg-[#f4eee3]/85 backdrop-blur-md">
+      <header className="sticky top-0 z-20 border-b border-ink/8 bg-[#f5f5f5]/90 backdrop-blur-md">
         <div className="max-w-[1440px] mx-auto px-5 py-3.5 flex items-center justify-between gap-4">
           <Logo compact />
           <div className="flex items-center gap-3 text-xs">
@@ -468,7 +468,7 @@ function EmptyState({ onOpenSample }: { onOpenSample: () => void }) {
             src="/images/hero-briefing-desk.png"
             alt="Warm oak briefing desk with legal folders, a lamp, and an empty second chair"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#161410]/75 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#141414]/75 via-transparent to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10 text-cream">
             <p className="text-[11px] uppercase tracking-[0.28em] text-brass">A briefing desk, not a robot lawyer</p>
             <h2 className="font-serif text-3xl md:text-5xl mt-2 max-w-2xl leading-[1.12]">
