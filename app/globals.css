@@ -38,19 +38,19 @@ body {
 }
 
 .btn-primary {
-  @apply bg-ink text-cream hover:bg-graphite shadow-sm;
+  @apply bg-ink text-cream hover:bg-moss shadow-sm;
 }
 
 .btn-ghost {
-  @apply border border-ink/15 bg-white/50 text-ink hover:border-graphite/70 hover:bg-white;
+  @apply border border-ink/15 bg-white/50 text-ink hover:border-brass/70 hover:bg-white;
 }
 
 .btn-moss {
-  @apply bg-graphite text-cream hover:brightness-110 shadow-sm;
+  @apply bg-moss text-cream hover:brightness-110 shadow-sm;
 }
 
 .field {
-  @apply w-full rounded-xl border border-ink/10 bg-white/70 px-3 py-2 text-sm outline-none focus:border-graphite focus:ring-2 focus:ring-graphite/20;
+  @apply w-full rounded-xl border border-ink/10 bg-white/70 px-3 py-2 text-sm outline-none focus:border-brass focus:ring-2 focus:ring-brass/20;
 }
 
 .chip {
