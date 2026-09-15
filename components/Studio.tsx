@@ -3,6 +3,7 @@
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { motion } from "framer-motion";
 import { Logo } from "@/components/Brand";
+import { AppSidebar } from "@/components/AppSidebar";
 import { IconBrief, IconChat, IconDoc, IconSplit } from "@/components/Icons";
 import { readFileAsDocument } from "@/lib/extract";
 import { SAMPLES } from "@/lib/samples";
@@ -45,10 +46,6 @@ export default function Studio() {
   const [goal, setGoal] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [question, setQuestion] = useState("");
-  const [pasteOpen, setPasteOpen] = useState(false);
-  const [pasteName, setPasteName] = useState("Pasted document");
-  const [pasteText, setPasteText] = useState("");
-  const fileRef = useRef<HTMLInputElement>(null);
 
   const active = docs.find((d) => d.id === activeId) || docs[0] || null;
   const analysis = active ? analyses[active.id] : undefined;
@@ -297,112 +294,26 @@ export default function Studio() {
         </div>
       </header>
 
-      <div className="max-w-[1440px] mx-auto px-5 py-6 grid lg:grid-cols-[300px_minmax(0,1fr)] gap-6 items-start">
-        <aside className="space-y-4 lg:sticky lg:top-24">
-          <section className="paper-card rounded-studio p-5">
-            <h2 className="font-serif text-xl">The file</h2>
-            <p className="text-xs text-slate mt-1 leading-relaxed">
-              PDF or text. Nothing is sent to a model until you run an analysis.
-            </p>
-            <div className="mt-4 flex flex-col gap-2">
-              <button className="btn btn-primary" onClick={() => fileRef.current?.click()}>
-                Upload PDF or text
-              </button>
-              <input
-                ref={fileRef}
-                type="file"
-                accept=".pdf,.txt,.md,.docx,text/plain,application/pdf"
-                className="hidden"
-                multiple
-                onChange={(e) => onFiles(e.target.files)}
-              />
-              <button className="btn btn-ghost" onClick={() => setPasteOpen((v) => !v)}>
-                Paste text
-              </button>
-            </div>
-            {pasteOpen && (
-              <div className="mt-3 space-y-2">
-                <input
-                  className="field"
-                  value={pasteName}
-                  onChange={(e) => setPasteName(e.target.value)}
-                />
-                <textarea
-                  className="field h-28 resize-y"
-                  placeholder="Paste the clause or whole document…"
-                  value={pasteText}
-                  onChange={(e) => setPasteText(e.target.value)}
-                />
-                <button
-                  className="text-sm text-moss font-medium"
-                  onClick={() => {
-                    if (!pasteText.trim()) return;
-                    const doc: LegalDocument = {
-                      id: `paste-${crypto.randomUUID()}`,
-                      name: pasteName || "Pasted document",
-                      kind: "other",
-                      text: pasteText,
-                      source: "paste",
-                    };
-                    addDocs([doc]);
-                    setPasteText("");
-                    setPasteOpen(false);
-                  }}
-                >
-                  Add to file
-                </button>
-              </div>
-            )}
-          </section>
+      <div className="max-w-[1440px] mx-auto px-5 py-6 flex gap-6 items-start">
+        <AppSidebar
+          docs={docs}
+          activeId={activeId}
+          setActiveId={setActiveId}
+          onFiles={onFiles}
+          onAddSample={(doc) => addDocs([doc])}
+          onClearDocs={() => {
+            setDocs([]);
+            setActiveId(null);
+            setAnalyses({});
+            setComparison(null);
+            setBriefing(null);
+            setMessages([]);
+          }}
+          samples={SAMPLES}
+          live={live}
+        />
 
-          <section className="paper-card rounded-studio p-5">
-            <h3 className="text-[11px] uppercase tracking-[0.18em] text-brass">Fictional samples</h3>
-            <ul className="mt-3 space-y-1">
-              {SAMPLES.map((s) => (
-                <li key={s.id}>
-                  <button
-                    className="w-full text-left text-sm rounded-xl px-3 py-2.5 hover:bg-brass/10 transition-colors"
-                    onClick={() => addDocs([s])}
-                  >
-                    {s.name.replace(" (fictional)", "")}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section className="space-y-2">
-            {docs.map((d) => (
-              <button
-                key={d.id}
-                onClick={() => setActiveId(d.id)}
-                className={`w-full text-left paper-card rounded-2xl p-3.5 text-sm transition ${
-                  active?.id === d.id ? "ring-2 ring-brass/70" : "hover:shadow-soft"
-                }`}
-              >
-                <div className="font-medium truncate">{d.name}</div>
-                <div className="text-[11px] text-slate mt-0.5">{d.text.length.toLocaleString()} characters</div>
-              </button>
-            ))}
-            {docs.length > 0 && (
-              <button
-                className="text-xs text-rust px-1"
-                onClick={() => {
-                  setDocs([]);
-                  setActiveId(null);
-                  setAnalyses({});
-                  setComparison(null);
-                  setBriefing(null);
-                  setMessages([]);
-                }}
-              >
-                Clear file
-              </button>
-            )}
-          </section>
-        </aside>
-
-        <main className="min-w-0">
+        <main className="min-w-0 flex-1">
           {!active ? (
             <EmptyState onOpenSample={() => addDocs([SAMPLES[0]])} />
           ) : (
